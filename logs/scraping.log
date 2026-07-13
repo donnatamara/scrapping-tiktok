@@ -3226,3 +3226,21 @@ Call log:
 2026-07-11 18:59:43 | INFO     | Total video: 89
 2026-07-11 18:59:43 | INFO     | ============================================================
 2026-07-11 18:59:44 | INFO     | Mengekspor ke CSV...
+2026-07-13 09:37:28 | INFO     | ============================================================
+2026-07-13 09:37:28 | INFO     | TIKTOK BANYUMAS SCRAPER v2.0
+2026-07-13 09:37:28 | INFO     | ============================================================
+2026-07-13 09:37:28 | INFO     | Mode: VISIBLE
+2026-07-13 09:37:28 | INFO     | Database: output/tiktok_data.db
+2026-07-13 09:37:28 | INFO     | ============================================================
+2026-07-13 09:37:28 | INFO     | MEMULAI SCRAPING TIKTOK BANYUMAS
+2026-07-13 09:37:28 | INFO     | ============================================================
+2026-07-13 09:37:37 | INFO     | Browser berhasil dimulai
+2026-07-13 09:37:37 | INFO     | Mencari akun untuk keyword: Banyumas
+2026-07-13 09:37:50 | INFO     | User search 'Banyumas': 10 akun
+2026-07-13 09:38:04 | INFO     | Video search 'Banyumas': 12 creator akun
+2026-07-13 09:38:04 | INFO     | Ditemukan 22 akun untuk keyword: Banyumas (10 user, 12 dari video)
+2026-07-13 09:38:04 | INFO     | Scrape akun: @_veraraaaaa
+2026-07-13 09:38:19 | WARNING  | Tidak bisa ambil data @_veraraaaaa
+2026-07-13 09:38:22 | INFO     | Scrape akun: @aniarisma2
+2026-07-13 09:38:33 | WARNING  | Scraping dihentikan oleh user
+2026-07-13 09:38:33 | INFO     | Mengekspor ke CSV...

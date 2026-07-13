@@ -573,16 +573,29 @@ class TikTokScraper:
             page_text = page.inner_text("body") or ""
             html = page.content()
 
+            if "couldn't find this account" in page_text.lower() or "this account doesn't exist" in page_text.lower():
+                return None
+
             nickname = self._extract_by_regex(html, [
                 r'<title>(.*?)\s*\(@',
                 r'<title>(.*?)\s*-\s*TikTok',
                 r'"nickname"\s*:\s*"([^"]+)"',
             ]) or username
 
+            if not nickname or len(nickname) > 100 or "<" in nickname or ">" in nickname:
+                self.logger.debug(f"  Nickname tidak valid: {nickname[:50]}")
+                return None
+
             bio = self._extract_by_regex(html, [
                 r'"signature"\s*:\s*"((?:[^"\\]|\\.)*)"',
                 r'"bio"\s*:\s*"((?:[^"\\]|\\.)*)"',
             ]) or ""
+            if bio and len(bio) > 2000:
+                bio = ""
+
+            if followers is None and following is None and video_count is None:
+                self.logger.debug(f"  Tidak ada data statistik di DOM untuk @{username}")
+                return None
 
             profile_location = self._extract_by_regex(html, [
                 r'"location"\s*:\s*"((?:[^"\\]|\\.)*)"',

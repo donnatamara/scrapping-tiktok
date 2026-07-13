@@ -6,7 +6,6 @@ class LocationDetector:
         self.subdistricts_lower = {s.lower(): s for s in subdistricts}
         self.keywords = [
             "banyumas",
-            "purwokerto",
         ]
 
     def detect(self, profile_location: Optional[str] = None,
@@ -68,7 +67,7 @@ class LocationDetector:
         if not text:
             return False
         text_lower = text.lower()
-        if "banyumas" in text_lower or "purwokerto" in text_lower:
+        if "banyumas" in text_lower:
             return True
         for sub_lower in self.subdistricts_lower:
             if sub_lower in text_lower:
