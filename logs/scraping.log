@@ -3244,3 +3244,60 @@ Call log:
 2026-07-13 09:38:22 | INFO     | Scrape akun: @aniarisma2
 2026-07-13 09:38:33 | WARNING  | Scraping dihentikan oleh user
 2026-07-13 09:38:33 | INFO     | Mengekspor ke CSV...
+2026-07-14 09:20:05 | INFO     | ============================================================
+2026-07-14 09:20:05 | INFO     | TIKTOK BANYUMAS SCRAPER v2.0
+2026-07-14 09:20:05 | INFO     | ============================================================
+2026-07-14 09:20:05 | INFO     | Mode: REMOTE CDP: http://localhost:9222
+2026-07-14 09:20:05 | INFO     | Database: output/tiktok_data.db
+2026-07-14 09:20:05 | INFO     | ============================================================
+2026-07-14 09:20:05 | INFO     | MEMULAI SCRAPING TIKTOK BANYUMAS
+2026-07-14 09:20:05 | INFO     | ============================================================
+2026-07-14 09:20:06 | INFO     | Menghubungkan ke remote Chrome via CDP: http://localhost:9222
+2026-07-14 09:20:15 | ERROR    | Fatal error: BrowserType.connect_over_cdp: connect ECONNREFUSED ::1:9222
+Call log:
+  - <ws preparing> retrieving websocket url from http://localhost:9222
+
+2026-07-14 09:20:15 | INFO     | Mengekspor ke CSV...
+2026-07-14 09:28:39 | INFO     | ============================================================
+2026-07-14 09:28:39 | INFO     | TIKTOK BANYUMAS SCRAPER v2.0
+2026-07-14 09:28:39 | INFO     | ============================================================
+2026-07-14 09:28:39 | INFO     | Mode: REMOTE CDP: http://127.0.0.1:9222
+2026-07-14 09:28:39 | INFO     | Database: output/tiktok_data.db
+2026-07-14 09:28:39 | INFO     | ============================================================
+2026-07-14 09:28:39 | INFO     | MEMULAI SCRAPING TIKTOK BANYUMAS
+2026-07-14 09:28:39 | INFO     | ============================================================
+2026-07-14 09:28:39 | INFO     | Menghubungkan ke remote Chrome via CDP: http://127.0.0.1:9222
+2026-07-14 09:28:41 | ERROR    | Fatal error: BrowserType.connect_over_cdp: connect ECONNREFUSED 127.0.0.1:9222
+Call log:
+  - <ws preparing> retrieving websocket url from http://127.0.0.1:9222
+
+2026-07-14 09:28:41 | INFO     | Mengekspor ke CSV...
+2026-07-14 09:29:01 | INFO     | ============================================================
+2026-07-14 09:29:01 | INFO     | TIKTOK BANYUMAS SCRAPER v2.0
+2026-07-14 09:29:01 | INFO     | ============================================================
+2026-07-14 09:29:01 | INFO     | Mode: REMOTE CDP: http://127.0.0.1:9222
+2026-07-14 09:29:01 | INFO     | Database: output/tiktok_data.db
+2026-07-14 09:29:01 | INFO     | ============================================================
+2026-07-14 09:29:01 | INFO     | MEMULAI SCRAPING TIKTOK BANYUMAS
+2026-07-14 09:29:01 | INFO     | ============================================================
+2026-07-14 09:29:01 | INFO     | Menghubungkan ke remote Chrome via CDP: http://127.0.0.1:9222
+2026-07-14 09:29:02 | ERROR    | Fatal error: BrowserType.connect_over_cdp: connect ECONNREFUSED 127.0.0.1:9222
+Call log:
+  - <ws preparing> retrieving websocket url from http://127.0.0.1:9222
+
+2026-07-14 09:29:02 | INFO     | Mengekspor ke CSV...
+2026-07-14 09:33:25 | INFO     | ============================================================
+2026-07-14 09:33:25 | INFO     | TIKTOK BANYUMAS SCRAPER v2.0
+2026-07-14 09:33:25 | INFO     | ============================================================
+2026-07-14 09:33:25 | INFO     | Mode: REMOTE CDP: http://127.0.0.1:9263
+2026-07-14 09:33:25 | INFO     | Database: output/tiktok_data.db
+2026-07-14 09:33:25 | INFO     | ============================================================
+2026-07-14 09:33:25 | INFO     | MEMULAI SCRAPING TIKTOK BANYUMAS
+2026-07-14 09:33:25 | INFO     | ============================================================
+2026-07-14 09:33:25 | INFO     | Menghubungkan ke remote Chrome via CDP: http://127.0.0.1:9263
+2026-07-14 09:33:27 | INFO     | Menggunakan existing context (1 pages)
+2026-07-14 09:33:27 | INFO     | Browser remote terhubung (http://127.0.0.1:9263)
+2026-07-14 09:33:27 | INFO     | Mencari akun untuk keyword: Banyumas
+2026-07-14 09:35:35 | INFO     | Melepas koneksi dari remote browser (tanpa menutupnya)
+2026-07-14 09:35:37 | WARNING  | Scraping dihentikan oleh user
+2026-07-14 09:35:38 | INFO     | Mengekspor ke CSV...

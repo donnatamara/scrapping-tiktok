@@ -80,19 +80,32 @@ class BrowserManager:
     def __init__(self, headless: bool = False,
                  viewport_width: int = 1366,
                  viewport_height: int = 768,
-                 logger=None):
+                 logger=None,
+                 cdp_url: str = ""):
         self.headless = headless
         self.viewport = {"width": viewport_width, "height": viewport_height}
         self.playwright: Optional[sync_playwright] = None
         self.browser: Optional[Browser] = None
         self.context: Optional[BrowserContext] = None
         self.logger = logger
+        self.cdp_url = cdp_url
+        self._connected = False
+
+    @property
+    def is_connected(self):
+        return self._connected
 
     def _log(self, msg):
         if self.logger:
             self.logger.info(msg)
 
     def start(self):
+        if self.cdp_url:
+            self._connect_via_cdp(self.cdp_url)
+        else:
+            self._launch_browser()
+
+    def _launch_browser(self):
         self.playwright = sync_playwright().start()
         self.browser = self.playwright.chromium.launch(
             headless=self.headless,
@@ -107,6 +120,22 @@ class BrowserManager:
             ],
         )
         self._create_context()
+
+    def _connect_via_cdp(self, url: str):
+        self._log(f"Menghubungkan ke remote Chrome via CDP: {url}")
+        self.playwright = sync_playwright().start()
+        self.browser = self.playwright.chromium.connect_over_cdp(url)
+        self._connected = True
+        if self.browser.contexts:
+            self.context = self.browser.contexts[0]
+            self._log(f"Menggunakan existing context ({len(self.context.pages)} pages)")
+        else:
+            self.context = self.browser.new_context(
+                viewport=self.viewport,
+                locale="id-ID",
+                timezone_id="Asia/Jakarta",
+            )
+        self.context.add_init_script(STEALTH_SCRIPT)
 
     def _create_context(self):
         self.context = self.browser.new_context(
@@ -130,12 +159,21 @@ class BrowserManager:
             page.set_default_timeout(45000)
             return page
         except Exception:
+            if self._connected:
+                self._log("Gagal buat page di remote browser, coba lagi...")
+                time.sleep(2)
+                page = self.context.new_page()
+                page.set_default_timeout(45000)
+                return page
             self._restart_context()
             page = self.context.new_page()
             page.set_default_timeout(45000)
             return page
 
     def _restart_context(self):
+        if self._connected:
+            self._log("Tidak bisa restart context di remote browser (akan buat page baru)")
+            return
         try:
             if self.context:
                 try:
@@ -210,6 +248,14 @@ class BrowserManager:
         time.sleep(random.uniform(min_sec, max_sec))
 
     def stop(self):
+        if self._connected:
+            self._log("Melepas koneksi dari remote browser (tanpa menutupnya)")
+            try:
+                if self.playwright:
+                    self.playwright.stop()
+            except Exception:
+                pass
+            return
         try:
             if self.context:
                 try:

@@ -190,6 +190,7 @@ class Settings:
         "pesan",
     ])
 
+    REMOTE_CDP: str = ""
     MAX_VIDEOS_PER_ACCOUNT: int = 99999
     HEADLESS: bool = False
     VIEWPORT_WIDTH: int = 1366

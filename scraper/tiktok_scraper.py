@@ -51,6 +51,7 @@ class TikTokScraper:
             viewport_width=settings.VIEWPORT_WIDTH,
             viewport_height=settings.VIEWPORT_HEIGHT,
             logger=logger,
+            cdp_url=settings.REMOTE_CDP,
         )
         self.location_detector = LocationDetector(settings.BANYUMAS_SUBDISTRICTS)
         self.indicator_detector = IndicatorDetector(
@@ -65,7 +66,10 @@ class TikTokScraper:
         self.logger.info("=" * 60)
 
         self.browser.start()
-        self.logger.info("Browser berhasil dimulai")
+        if self.browser.is_connected:
+            self.logger.info(f"Browser remote terhubung ({self.browser.cdp_url})")
+        else:
+            self.logger.info("Browser lokal berhasil dimulai")
 
         try:
             keywords = self.settings.SEARCH_KEYWORDS + [
