@@ -1,0 +1,313 @@
+{
+  "total_accounts": 1079,
+  "total_raw_accounts": 1109,
+  "total_videos": 2804,
+  "accounts_per_class": {
+    "personal": 876,
+    "foodvloger": 158,
+    "travel": 27,
+    "affiliate": 13,
+    "lifestyle": 5
+  },
+  "accounts_with_shop": 66,
+  "accounts_monetized": 40,
+  "with_location": 537,
+  "classification_labels": [
+    "personal",
+    "foodvloger",
+    "travel",
+    "affiliate",
+    "lifestyle"
+  ],
+  "classification_values": [
+    876,
+    158,
+    27,
+    13,
+    5
+  ],
+  "top_locations": [
+    {
+      "name": "Banyumas",
+      "count": 213
+    },
+    {
+      "name": "Purwokerto",
+      "count": 76
+    },
+    {
+      "name": "Wangon",
+      "count": 31
+    },
+    {
+      "name": "Kalibagor",
+      "count": 22
+    },
+    {
+      "name": "Patikraja",
+      "count": 20
+    },
+    {
+      "name": "Kembaran",
+      "count": 18
+    },
+    {
+      "name": "Sumbang",
+      "count": 16
+    },
+    {
+      "name": "Kemranjen",
+      "count": 16
+    },
+    {
+      "name": "Rawalo",
+      "count": 15
+    },
+    {
+      "name": "Ajibarang",
+      "count": 15
+    },
+    {
+      "name": "Kebasen",
+      "count": 15
+    },
+    {
+      "name": "Karanglewas",
+      "count": 14
+    },
+    {
+      "name": "Cilongok",
+      "count": 14
+    },
+    {
+      "name": "Baturraden",
+      "count": 13
+    },
+    {
+      "name": "Lumbir",
+      "count": 13
+    },
+    {
+      "name": "Sokaraja",
+      "count": 11
+    },
+    {
+      "name": "Purwokerto Utara",
+      "count": 4
+    },
+    {
+      "name": "Purwokerto Barat",
+      "count": 3
+    },
+    {
+      "name": "Purwokerto Selatan",
+      "count": 3
+    },
+    {
+      "name": "Purwokerto Timur",
+      "count": 2
+    }
+  ],
+  "top_accounts": [
+    {
+      "rank": 1,
+      "username": "vilmeijuga",
+      "followers": 72600000,
+      "nickname": "VILMEI 🌟",
+      "classification": "personal",
+      "location": null,
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 2,
+      "username": "haikalequinostd",
+      "followers": 9500000,
+      "nickname": "Haikalequino",
+      "classification": "foodvloger",
+      "location": null,
+      "has_shop": false,
+      "monetization": true
+    },
+    {
+      "rank": 3,
+      "username": "uncufadillah79_",
+      "followers": 6300000,
+      "nickname": "Uncu fadillah✨",
+      "classification": "personal",
+      "location": null,
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 4,
+      "username": "tribunnews",
+      "followers": 5300000,
+      "nickname": "Tribunnews",
+      "classification": "personal",
+      "location": null,
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 5,
+      "username": "farida.nurhan",
+      "followers": 5100000,
+      "nickname": "Farida Nurhan",
+      "classification": "personal",
+      "location": null,
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 6,
+      "username": "eri_carl",
+      "followers": 5000000,
+      "nickname": "Erika Carlina",
+      "classification": "personal",
+      "location": null,
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 7,
+      "username": "aniesbaswedan",
+      "followers": 3200000,
+      "nickname": "Anies Rasyid Baswedan",
+      "classification": "foodvloger",
+      "location": null,
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 8,
+      "username": "rusdyramadhan_",
+      "followers": 3000000,
+      "nickname": "BANGKU KOSONG TV",
+      "classification": "travel",
+      "location": null,
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 9,
+      "username": "cahyaniryndua",
+      "followers": 2300000,
+      "nickname": "Kembaran cahya",
+      "classification": "personal",
+      "location": "Kembaran",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 10,
+      "username": "mayriow",
+      "followers": 2300000,
+      "nickname": "ioow",
+      "classification": "travel",
+      "location": null,
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 11,
+      "username": "dmssnpt",
+      "followers": 1900000,
+      "nickname": "Dimas Senopati",
+      "classification": "personal",
+      "location": null,
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 12,
+      "username": "beritasatuofficial",
+      "followers": 1500000,
+      "nickname": "beritasatu",
+      "classification": "personal",
+      "location": null,
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 13,
+      "username": "bettyaugustina",
+      "followers": 1300000,
+      "nickname": "Betty Augustina",
+      "classification": "foodvloger",
+      "location": null,
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 14,
+      "username": "daddykuliner",
+      "followers": 1300000,
+      "nickname": "Daddy Kuliner",
+      "classification": "personal",
+      "location": null,
+      "has_shop": false,
+      "monetization": true
+    },
+    {
+      "rank": 15,
+      "username": "stevensuryadinata",
+      "followers": 1100000,
+      "nickname": "Eevee Boy",
+      "classification": "personal",
+      "location": "Kembaran",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 16,
+      "username": "kulinerbattle",
+      "followers": 1000000,
+      "nickname": "kuliner battle",
+      "classification": "personal",
+      "location": null,
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 17,
+      "username": "maria.oldiest",
+      "followers": 866400,
+      "nickname": "Mariaabiring",
+      "classification": "personal",
+      "location": null,
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 18,
+      "username": "iniiyaaaw2",
+      "followers": 722900,
+      "nickname": "Kembaran iyaaaw",
+      "classification": "personal",
+      "location": "Kembaran",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 19,
+      "username": "syasyetwins",
+      "followers": 672600,
+      "nickname": "Sya &amp; Sye",
+      "classification": "foodvloger",
+      "location": "Kembaran",
+      "has_shop": true,
+      "monetization": false
+    },
+    {
+      "rank": 20,
+      "username": "bangdullofficiall",
+      "followers": 569800,
+      "nickname": "TRAVEL HORROR TV",
+      "classification": "travel",
+      "location": null,
+      "has_shop": false,
+      "monetization": false
+    }
+  ]
+}
