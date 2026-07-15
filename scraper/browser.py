@@ -104,6 +104,17 @@ class BrowserManager:
                 "--disable-features=IsolateOrigins,site-per-process",
                 "--disable-session-crashed-bubble",
                 "--disable-infobars",
+                "--disable-background-networking",
+                "--disable-background-timer-throttling",
+                "--disable-backgrounding-occluded-windows",
+                "--disable-component-update",
+                "--disable-field-trial-config",
+                "--disable-renderer-backgrounding",
+                "--disable-gpu",
+                "--mute-audio",
+                "--no-first-run",
+                "--no-default-browser-check",
+                "--window-size=1366,768",
             ],
         )
         self._create_context()
@@ -118,8 +129,16 @@ class BrowserManager:
             device_scale_factor=1,
             is_mobile=False,
             has_touch=False,
+            color_scheme="light",
+            reduced_motion="no-preference",
+            forced_colors="none",
         )
-        self.context.set_default_timeout(45000)
+        self.context.set_default_timeout(60000)
+        self.context.set_extra_http_headers({
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            "Accept-Language": "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7",
+            "Referer": "https://www.tiktok.com/",
+        })
         self.context.add_init_script(STEALTH_SCRIPT)
 
     def new_page(self) -> Page:

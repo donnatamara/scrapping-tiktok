@@ -38,4 +38,6 @@ class Account(BaseModel):
     average_comments: Optional[float] = None
     average_shares: Optional[float] = None
     engagement_rate: Optional[float] = None
+    classification: Optional[str] = None
+    product_count: Optional[int] = None
     scraped_at: str = Field(default_factory=lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S"))

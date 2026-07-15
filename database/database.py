@@ -57,6 +57,8 @@ class Database:
                 average_comments REAL,
                 average_shares REAL,
                 engagement_rate REAL,
+                classification TEXT,
+                product_count INTEGER,
                 scraped_at TEXT
             );
 
@@ -98,6 +100,13 @@ class Database:
             self.conn.execute("ALTER TABLE accounts RENAME COLUMN tiktok_shop TO has_tiktok_shop")
         except sqlite3.OperationalError:
             pass
+
+        for col in ["classification TEXT", "product_count INTEGER"]:
+            try:
+                self.conn.execute(f"ALTER TABLE accounts ADD COLUMN {col}")
+            except sqlite3.OperationalError:
+                pass
+
         self.conn.commit()
 
     def account_exists(self, username: str) -> bool:
@@ -119,8 +128,9 @@ class Database:
                 business_indicators_found,
                 live_detected, has_tiktok_shop, monetization,
                 average_views, average_likes, average_comments,
-                average_shares, engagement_rate, scraped_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                average_shares, engagement_rate,
+                classification, product_count, scraped_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             account.username, account.unique_id, account.nickname, account.bio,
             account.profile_url, account.avatar_url, account.followers, account.following,
@@ -132,7 +142,8 @@ class Database:
             account.business_indicators_found,
             account.live_detected, account.has_tiktok_shop, account.monetization,
             account.average_views, account.average_likes, account.average_comments,
-            account.average_shares, account.engagement_rate, account.scraped_at,
+            account.average_shares, account.engagement_rate,
+            account.classification, account.product_count, account.scraped_at,
         ))
         self.conn.commit()
 

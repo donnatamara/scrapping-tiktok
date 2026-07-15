@@ -2,6 +2,7 @@ import json
 import re
 import random
 import time
+from collections import deque
 from typing import List, Optional, Set, Dict, Any
 from urllib.parse import urljoin
 
@@ -38,6 +39,47 @@ COMMERCE_VIDEO_KEYS = [
     "affiliate", "commerce",
 ]
 
+CLASSIFICATION_KEYWORDS = {
+    "travel": [
+        "travel", "wisata", "liburan", "vacation", "hotel", "pantai", "gunung",
+        "destinasi", "jalan-jalan", "tour", "trip", "holiday", "beach", "mountain",
+        "explore", "adventure", "travelling", "backpacker", "roadtrip", "getaway",
+        "wanderlust", "libur", "tiket", "pesawat", "bandara", "penginapan",
+        "resort", "villa", "wisata alam", "wisata kuliner", "wisata budaya",
+        "candi", "air terjun", "danau", "pulau", "snorkeling", "diving",
+    ],
+    "foodvloger": [
+        "food", "makanan", "kuliner", "resep", "recipe", "restaurant", "cafe",
+        "masak", "cooking", "makan", "minum", "kopi", "coffee", "street food",
+        "foodie", "makanan enak", "jajanan", "snack", "cemilan", "bakso", "soto",
+        "nasi", "mie", "ayam", "sate", "seafood", "dimsum", "roti", "kue",
+        "bakery", "dessert", "minuman", "es", "pedas", "enak", "nyobain",
+        "cobain", "review makanan", "food review", "mukbang", "kulineran",
+    ],
+    "lifestyle": [
+        "lifestyle", "fashion", "outfit", "ootd", "style", "daily", "vlog",
+        "rutinitas", "morning routine", "skincare", "makeup", "beauty",
+        "gym", "workout", "fitness", "health", "healthy", "tips",
+        "dekorasi", "home", "interior", "review", "haul", "shopping",
+        "fashion", "grooming", "bodycare", "haircare", "perawatan",
+        "daily life", "my day", "productive", "self care", "wellness",
+        "motivasi", "inspirasi", "quote", "self improvement",
+    ],
+    "affiliate": [
+        "affiliate", "link", "promo", "diskon", "discount", "cod",
+        "belanja", "shop", "order", "pesan", "shopee", "tokopedia",
+        "tiktok shop", "keranjang kuning", "link di bio", "linktree",
+        "free ongkir", "voucher", "flash sale", "murah", "hemat", "promosi",
+        "jual", "jualan", "produk", "barang", "rekomendasi", "recommended",
+        "checkout", "bundling", "paket hemat", "gratis", "bonus",
+    ],
+}
+
+PRODUCT_COUNT_FIELDS = [
+    "productCount", "shopProductCount", "tiktokShopCount",
+    "productCountInShop", "sellerProductCount",
+]
+
 
 class TikTokScraper:
     BASE_URL = "https://www.tiktok.com"
@@ -58,6 +100,27 @@ class TikTokScraper:
             settings.MONETIZATION_KEYWORDS, settings.SHOP_KEYWORDS,
         )
         self.scraped_accounts: Set[str] = set()
+        self._warmed_up = False
+
+    def _warmup(self):
+        if self._warmed_up:
+            return
+        self.logger.info("Warm-up: kunjungi TikTok homepage...")
+        try:
+            page = self.browser.new_page()
+            page.goto(self.BASE_URL, wait_until="domcontentloaded", timeout=30000)
+            try:
+                page.wait_for_load_state("networkidle", timeout=10000)
+            except Exception:
+                pass
+            page.wait_for_timeout(3000)
+            self._handle_popups(page)
+            page.close()
+            self._warmed_up = True
+            self.logger.info("Warm-up selesai")
+        except Exception as e:
+            self.logger.warning(f"Warm-up gagal: {e}")
+            self._warmed_up = True
 
     def run(self):
         self.logger.info("=" * 60)
@@ -68,6 +131,8 @@ class TikTokScraper:
         self.logger.info("Browser berhasil dimulai")
 
         try:
+            self._warmup()
+
             keywords = self.settings.SEARCH_KEYWORDS + [
                 f"#{h}" for h in self.settings.HASHTAGS
             ]
@@ -80,6 +145,9 @@ class TikTokScraper:
                 self.browser.random_delay(
                     self.settings.MIN_DELAY, self.settings.MAX_DELAY
                 )
+
+            if self.settings.ENABLE_NETWORK_EXPANSION:
+                self._expand_network()
 
             self.logger.info("=" * 60)
             self.logger.info("SCRAPING SELESAI")
@@ -98,13 +166,14 @@ class TikTokScraper:
 
         usernames = set()
 
-        results = self._search_users(keyword)
-        for u in results:
-            usernames.add(u)
+        hashtag_results = self._search_hashtag(keyword)
+        usernames.update(hashtag_results)
+
+        search_results = self._search_users(keyword)
+        usernames.update(search_results)
 
         video_results = self._search_videos(keyword)
-        for u in video_results:
-            usernames.add(u)
+        usernames.update(video_results)
 
         if not usernames:
             self.logger.warning(f"Tidak ada hasil untuk keyword: {keyword}")
@@ -112,7 +181,7 @@ class TikTokScraper:
 
         self.logger.info(
             f"Ditemukan {len(usernames)} akun untuk keyword: {keyword}"
-            f" ({len(results)} user, {len(video_results)} dari video)"
+            f" ({len(hashtag_results)} dari hashtag, {len(search_results)} user search, {len(video_results)} video search)"
         )
 
         for username in sorted(usernames):
@@ -144,29 +213,93 @@ class TikTokScraper:
 
     def _search_users(self, keyword: str) -> List[str]:
         page = self.browser.new_page()
-        usernames = []
+        usernames: Set[str] = set()
         had_error = False
 
+        def on_response(response):
+            try:
+                if not response.ok:
+                    return
+                ctype = response.headers.get("content-type", "")
+                if "application/json" not in ctype:
+                    return
+                data = response.json()
+                if not isinstance(data, dict):
+                    return
+
+                def _walk(obj):
+                    if not isinstance(obj, dict):
+                        return
+                    uid = obj.get("uniqueId")
+                    if isinstance(uid, str) and len(uid) > 1:
+                        usernames.add(uid)
+                    for v in obj.values():
+                        if isinstance(v, list):
+                            for item in v:
+                                _walk(item)
+                        elif isinstance(v, dict):
+                            _walk(v)
+
+                _walk(data)
+            except Exception:
+                pass
+
+        page.on("response", on_response)
+
         try:
-            search_url = f"{self.BASE_URL}/search/user?q={keyword}"
-            self.logger.debug(f"Navigasi ke: {search_url}")
+            search_url = f"{self.BASE_URL}/search?q={keyword}"
+            self.logger.debug(f"User search via: {search_url}")
             page.goto(search_url, wait_until="domcontentloaded", timeout=self.settings.PAGE_LOAD_TIMEOUT)
             self._handle_popups(page)
             try:
-                page.wait_for_load_state("networkidle", timeout=8000)
+                page.wait_for_load_state("networkidle", timeout=12000)
             except Exception:
                 pass
             page.wait_for_timeout(3000)
 
-            if self._is_blocked_or_login(page):
-                return []
+            for tab_text in ("Users", "People", "Akun"):
+                try:
+                    tab = page.query_selector(f'div[role="tab"]:has-text("{tab_text}"), span:has-text("{tab_text}")')
+                    if tab and tab.is_visible():
+                        tab.click()
+                        page.wait_for_timeout(3000)
+                        self.logger.debug(f"  Clicked tab: {tab_text}")
+                        break
+                except Exception:
+                    pass
 
-            if self._check_verification(page):
-                self.logger.warning(f"Verification di user search '{keyword}'")
-                return []
+            try:
+                page.evaluate("window.scrollTo(0, 400)")
+            except Exception:
+                pass
+            try:
+                page.wait_for_timeout(2000)
+            except Exception:
+                pass
 
-            usernames = self._extract_search_results(page, user_search=True)
-            self.logger.info(f"User search '{keyword}': {len(usernames)} akun")
+            blocked = self._is_blocked_or_login(page)
+            verified = self._check_verification(page)
+
+            if blocked:
+                _debug_page(page, self.logger, f"blocked_user_{keyword}")
+
+            try:
+                links = page.evaluate("""() =>
+                    Array.from(document.querySelectorAll('a[href*="/@"]'))
+                        .map(a => a.getAttribute('href'))
+                        .filter(Boolean)
+                """)
+                for link in links:
+                    m = re.search(r'/@([a-zA-Z0-9_.]+)', link)
+                    if m and len(m.group(1)) > 1:
+                        usernames.add(m.group(1))
+            except Exception:
+                pass
+
+            html_usernames = self._extract_usernames_from_page(page)
+            usernames.update(html_usernames)
+
+            self.logger.info(f"User search '{keyword}': {len(usernames)} akun (url={page.url[:50]}, blocked={blocked}, verify={verified})")
 
         except PwTimeout:
             self.logger.warning(f"Timeout user search '{keyword}'")
@@ -176,6 +309,7 @@ class TikTokScraper:
             had_error = True
         finally:
             try:
+                page.remove_listener("response", on_response)
                 page.close()
             except Exception:
                 pass
@@ -183,33 +317,97 @@ class TikTokScraper:
         if had_error:
             self.browser._restart_context()
 
-        return usernames
+        return list(usernames)[:50]
 
     def _search_videos(self, keyword: str) -> List[str]:
         page = self.browser.new_page()
-        usernames = []
+        usernames: Set[str] = set()
         had_error = False
 
+        def on_response(response):
+            try:
+                if not response.ok:
+                    return
+                ctype = response.headers.get("content-type", "")
+                if "application/json" not in ctype:
+                    return
+                data = response.json()
+                if not isinstance(data, dict):
+                    return
+
+                def _walk(obj):
+                    if not isinstance(obj, dict):
+                        return
+                    uid = obj.get("uniqueId")
+                    if isinstance(uid, str) and len(uid) > 1:
+                        usernames.add(uid)
+                    for v in obj.values():
+                        if isinstance(v, list):
+                            for item in v:
+                                _walk(item)
+                        elif isinstance(v, dict):
+                            _walk(v)
+
+                _walk(data)
+            except Exception:
+                pass
+
+        page.on("response", on_response)
+
         try:
-            search_url = f"{self.BASE_URL}/search/video?q={keyword}"
-            self.logger.debug(f"Video search ke: {search_url}")
+            search_url = f"{self.BASE_URL}/search?q={keyword}"
+            self.logger.debug(f"Video search via: {search_url}")
             page.goto(search_url, wait_until="domcontentloaded", timeout=self.settings.PAGE_LOAD_TIMEOUT)
             self._handle_popups(page)
             try:
-                page.wait_for_load_state("networkidle", timeout=8000)
+                page.wait_for_load_state("networkidle", timeout=12000)
             except Exception:
                 pass
             page.wait_for_timeout(3000)
 
-            if self._is_blocked_or_login(page):
-                return []
+            for tab_text in ("Videos", "Video"):
+                try:
+                    tab = page.query_selector(f'div[role="tab"]:has-text("{tab_text}"), span:has-text("{tab_text}")')
+                    if tab and tab.is_visible():
+                        tab.click()
+                        page.wait_for_timeout(3000)
+                        self.logger.debug(f"  Clicked tab: {tab_text}")
+                        break
+                except Exception:
+                    pass
 
-            if self._check_verification(page):
-                self.logger.warning(f"Verification di video search '{keyword}'")
-                return []
+            try:
+                page.evaluate("window.scrollTo(0, 400)")
+            except Exception:
+                pass
+            try:
+                page.wait_for_timeout(2000)
+            except Exception:
+                pass
 
-            usernames = self._extract_search_results(page, user_search=False)
-            self.logger.info(f"Video search '{keyword}': {len(usernames)} creator akun")
+            blocked = self._is_blocked_or_login(page)
+            verified = self._check_verification(page)
+
+            if blocked:
+                _debug_page(page, self.logger, f"blocked_video_{keyword}")
+
+            try:
+                links = page.evaluate("""() =>
+                    Array.from(document.querySelectorAll('a[href*="/@"]'))
+                        .map(a => a.getAttribute('href'))
+                        .filter(Boolean)
+                """)
+                for link in links:
+                    m = re.search(r'/@([a-zA-Z0-9_.]+)', link)
+                    if m and len(m.group(1)) > 1:
+                        usernames.add(m.group(1))
+            except Exception:
+                pass
+
+            html_usernames = self._extract_usernames_from_page(page)
+            usernames.update(html_usernames)
+
+            self.logger.info(f"Video search '{keyword}': {len(usernames)} akun (url={page.url[:50]}, blocked={blocked}, verify={verified})")
 
         except PwTimeout:
             self.logger.warning(f"Timeout video search '{keyword}'")
@@ -219,6 +417,7 @@ class TikTokScraper:
             had_error = True
         finally:
             try:
+                page.remove_listener("response", on_response)
                 page.close()
             except Exception:
                 pass
@@ -226,43 +425,147 @@ class TikTokScraper:
         if had_error:
             self.browser._restart_context()
 
-        return usernames
+        return list(usernames)[:50]
 
-    def _extract_search_results(self, page: Page, user_search: bool = True) -> List[str]:
-        usernames = set()
+    def _search_hashtag(self, keyword: str) -> List[str]:
+        page = self.browser.new_page()
+        usernames: Set[str] = set()
+        had_error = False
+
+        def on_response(response):
+            try:
+                if not response.ok:
+                    return
+                ctype = response.headers.get("content-type", "")
+                if "application/json" not in ctype:
+                    return
+                data = response.json()
+                if not isinstance(data, dict):
+                    return
+
+                def _walk(obj):
+                    if not isinstance(obj, dict):
+                        return
+                    uid = obj.get("uniqueId")
+                    if isinstance(uid, str) and len(uid) > 1:
+                        usernames.add(uid)
+                    for v in obj.values():
+                        if isinstance(v, list):
+                            for item in v:
+                                _walk(item)
+                        elif isinstance(v, dict):
+                            _walk(v)
+
+                _walk(data)
+            except Exception:
+                pass
+
+        page.on("response", on_response)
 
         try:
-            if user_search:
-                selectors = ['[data-e2e="search-user-item"] a', 'a[href*="/@"]']
-            else:
-                selectors = [
-                    '[data-e2e="search-video-item"] a[href*="/@"]',
-                    'div[class*="search"] a[href*="/@"]',
-                    '[data-e2e="search-card-item"] a[href*="/@"]',
-                    'a[href*="/@"]',
-                ]
+            tag = keyword.lstrip("#").strip()
+            url = f"{self.BASE_URL}/tag/{tag}"
+            self.logger.debug(f"Hashtag page: {url}")
+            page.goto(url, wait_until="domcontentloaded", timeout=self.settings.PAGE_LOAD_TIMEOUT)
+            self._handle_popups(page)
+            try:
+                page.wait_for_load_state("networkidle", timeout=12000)
+            except Exception:
+                pass
+            page.wait_for_timeout(3000)
 
-            for sel in selectors:
-                links = page.query_selector_all(sel)
-                for link in links:
-                    href = link.get_attribute("href") or ""
-                    if "/@" in href:
-                        name = href.split("/@")[-1].split("/")[0].split("?")[0]
-                        if name:
-                            usernames.add(name)
-                if usernames:
+            for i in range(15):
+                try:
+                    page.evaluate("window.scrollBy(0, window.innerHeight * 2)")
+                except Exception:
                     break
+                page.wait_for_timeout(2000)
+                if len(usernames) >= 50:
+                    break
+
+            try:
+                links = page.evaluate("""() =>
+                    Array.from(document.querySelectorAll('a[href*="/@"]'))
+                        .map(a => a.getAttribute('href'))
+                        .filter(Boolean)
+                """)
+                for link in links:
+                    m = re.search(r'/@([a-zA-Z0-9_.]+)', link)
+                    if m and len(m.group(1)) > 1:
+                        usernames.add(m.group(1))
+            except Exception:
+                pass
+
+            self.logger.info(f"  Hashtag '{tag}': {len(usernames)} akun")
+
+        except Exception as e:
+            self.logger.error(f"  Error hashtag '{keyword}': {e}")
+            had_error = True
+        finally:
+            try:
+                page.remove_listener("response", on_response)
+                page.close()
+            except Exception:
+                pass
+
+        if had_error:
+            self.browser._restart_context()
+
+        return list(usernames)[:50]
+
+    def _extract_usernames_from_page(self, page: Page) -> List[str]:
+        usernames: set = set()
+        html = ""
+
+        try:
+            html = page.content()
+        except Exception:
+            return []
+
+        self.logger.debug(f"  Page HTML length: {len(html)} chars")
+
+        try:
+            page_text = page.inner_text("body") or ""
+            self.logger.debug(f"  Page body text length: {len(page_text)} chars")
+        except Exception:
+            page_text = ""
+
+        if len(html) < 500:
+            self.logger.debug(f"  Page terlalu kecil, mungkin blocked")
+            _debug_page(page, self.logger, "small_page")
+            return []
+
+        try:
+            for match in re.finditer(r'/"uniqueId"\s*:\s*"([^"]+)"', html):
+                uid = match.group(1)
+                if uid and len(uid) > 1:
+                    usernames.add(uid)
         except Exception:
             pass
 
-        if not usernames:
-            try:
-                html = page.content()
-                for m in re.findall(r'/@([a-zA-Z0-9_.]+)[?"\'<\s]', html):
-                    if m and len(m) > 1:
-                        usernames.add(m)
-            except Exception:
-                pass
+        try:
+            for match in re.finditer(r'"uniqueId"\s*:\s*"([^"]+)"', html):
+                uid = match.group(1)
+                if uid and len(uid) > 1:
+                    usernames.add(uid)
+        except Exception:
+            pass
+
+        try:
+            for match in re.finditer(r'"author"\s*:\s*\{\s*"uniqueId"\s*:\s*"([^"]+)"', html):
+                uid = match.group(1)
+                if uid and len(uid) > 1:
+                    usernames.add(uid)
+        except Exception:
+            pass
+
+        try:
+            for match in re.finditer(r'/@([a-zA-Z0-9_.]+)(?:\?|"|\'|<|\s|/|$)', html):
+                uid = match.group(1)
+                if uid and len(uid) > 1:
+                    usernames.add(uid)
+        except Exception:
+            pass
 
         exclude = {"search", "login", "signup", "explore", "messages",
                     "settings", "feedback", "about", "tiktok", "trending",
@@ -279,35 +582,45 @@ class TikTokScraper:
 
             def intercept_response(response):
                 try:
-                    if response.ok and "application/json" in (response.headers.get("content-type", "")):
-                        url = response.url
-                        data = response.json()
-                        if not isinstance(data, dict):
-                            return
+                    if not response.ok:
+                        return
+                    ctype = response.headers.get("content-type", "")
+                    if "application/json" not in ctype and "text/json" not in ctype:
+                        return
+                    url = response.url
+                    data = response.json()
+                    if not isinstance(data, dict):
+                        return
 
-                        if data.get("user") and isinstance(data["user"], dict):
-                            api_data["user"] = data["user"]
-                        user_info = data.get("userInfo", {})
-                        if user_info.get("user"):
-                            api_data["user"] = user_info["user"]
+                    user_obj = None
+                    if data.get("user") and isinstance(data["user"], dict):
+                        user_obj = data["user"]
+                    user_info = data.get("userInfo", {})
+                    if isinstance(user_info, dict) and user_info.get("user"):
+                        user_obj = user_info["user"]
+                    if data.get("userDetail") and isinstance(data["userDetail"], dict):
+                        user_obj = data["userDetail"]
 
-                        item_list = data.get("itemList", [])
-                        if isinstance(item_list, list):
-                            for item in item_list:
-                                vid = item.get("id") or item.get("video_id") or ""
-                                if vid and isinstance(item, dict):
-                                    if vid not in api_data["videos"]:
-                                        api_data["videos"][vid] = item
-                                        api_call_count[0] += 1
+                    if user_obj:
+                        api_data["user"] = user_obj
 
-                        posts = data.get("posts", [])
-                        if isinstance(posts, list):
-                            for item in posts:
-                                vid = item.get("id") or item.get("video_id") or ""
-                                if vid and isinstance(item, dict):
-                                    if vid not in api_data["videos"]:
-                                        api_data["videos"][vid] = item
-                                        api_call_count[0] += 1
+                    item_list = data.get("itemList", [])
+                    if isinstance(item_list, list):
+                        for item in item_list:
+                            vid = item.get("id") or item.get("video_id") or ""
+                            if vid and isinstance(item, dict):
+                                if vid not in api_data["videos"]:
+                                    api_data["videos"][vid] = item
+                                    api_call_count[0] += 1
+
+                    posts = data.get("posts", [])
+                    if isinstance(posts, list):
+                        for item in posts:
+                            vid = item.get("id") or item.get("video_id") or ""
+                            if vid and isinstance(item, dict):
+                                if vid not in api_data["videos"]:
+                                    api_data["videos"][vid] = item
+                                    api_call_count[0] += 1
                 except Exception:
                     pass
 
@@ -318,10 +631,10 @@ class TikTokScraper:
                 page.goto(profile_url, wait_until="domcontentloaded", timeout=self.settings.PAGE_LOAD_TIMEOUT)
                 self._handle_popups(page)
                 try:
-                    page.wait_for_load_state("networkidle", timeout=10000)
+                    page.wait_for_load_state("networkidle", timeout=15000)
                 except Exception:
                     pass
-                page.wait_for_timeout(3000)
+                page.wait_for_timeout(5000)
 
                 if self._is_blocked_or_login(page):
                     self.logger.warning(f"Redirect/login page @{username}")
@@ -362,7 +675,8 @@ class TikTokScraper:
                     page.close()
                     return
 
-                self.logger.info(f"  Scroll untuk load SEMUA video @{username}...")
+                max_videos = self.settings.MAX_VIDEOS_TO_SCRAPE
+                self.logger.info(f"  Scroll untuk load {max_videos} video terbaru @{username}...")
                 scrolls_without_new = 0
                 max_scrolls_without_new = 3
                 previous_count = len(api_data["videos"])
@@ -389,10 +703,19 @@ class TikTokScraper:
                         self.logger.info(f"  Berhenti scroll: {max_scrolls_without_new}x berturut-turut tanpa video baru")
                         break
 
+                    if current_count >= max_videos:
+                        self.logger.info(f"  Berhenti scroll: sudah cukup {max_videos} video")
+                        break
+
                     self.browser.random_delay(0.5, 1.5)
 
                 videos = []
-                for vid, item in api_data["videos"].items():
+                sorted_vids = sorted(
+                    api_data["videos"].items(),
+                    key=lambda x: x[1].get("createTime", 0) or 0,
+                    reverse=True,
+                )
+                for vid, item in sorted_vids[:max_videos]:
                     v = self._build_video(item, username)
                     if v:
                         videos.append(v)
@@ -415,6 +738,15 @@ class TikTokScraper:
                 self._calculate_statistics(account, videos)
                 self._detect_monetization(account, videos, api_data)
 
+                raw_user = api_data.get("user") or {}
+                for field in PRODUCT_COUNT_FIELDS:
+                    val = raw_user.get(field)
+                    if isinstance(val, (int, float)) and val > 0:
+                        account.product_count = int(val)
+                        break
+
+                account.classification = self._classify_account(videos)
+
                 self.db.save_account(account)
                 for v in videos:
                     self.db.save_video(v)
@@ -423,10 +755,13 @@ class TikTokScraper:
                 monet_info = f" | Monetisasi: {'YA' if account.monetization else 'TIDAK'}"
                 shop_info = f" | Shop: {'YA' if account.has_tiktok_shop else 'TIDAK'}"
                 er_info = f" | ER: {account.engagement_rate:.2f}%" if account.engagement_rate is not None else ""
+                cls_info = f" | Kelas: {account.classification or '-'}"
+                vc_info = f" | Video: {account.video_count or 0}"
                 self.logger.info(
                     f"Berhasil: @{username}"
                     f" | Followers: {account.followers or 0}"
-                    f"{loc_info}{monet_info}{shop_info}{er_info}"
+                    f"{vc_info}"
+                    f"{loc_info}{monet_info}{shop_info}{er_info}{cls_info}"
                 )
 
                 page.remove_listener("response", intercept_response)
@@ -593,10 +928,6 @@ class TikTokScraper:
             if bio and len(bio) > 2000:
                 bio = ""
 
-            if followers is None and following is None and video_count is None:
-                self.logger.debug(f"  Tidak ada data statistik di DOM untuk @{username}")
-                return None
-
             profile_location = self._extract_by_regex(html, [
                 r'"location"\s*:\s*"((?:[^"\\]|\\.)*)"',
                 r'"region"\s*:\s*"((?:[^"\\]|\\.)*)"',
@@ -627,6 +958,10 @@ class TikTokScraper:
 
             social = extract_social_media(bio)
             email = extract_email(bio)
+
+            if followers is None and following is None and video_count is None:
+                self.logger.debug(f"  Tidak ada data statistik di DOM untuk @{username}")
+                return None
 
             return Account(
                 username=username, unique_id=username,
@@ -663,11 +998,24 @@ class TikTokScraper:
 
     def _is_blocked_or_login(self, page: Page) -> bool:
         try:
-            if "login" in page.url.lower():
+            url = page.url.lower()
+            if url.startswith("https://www.tiktok.com/login"):
                 return True
-            body = (page.inner_text("body") or "").lower()
-            if "log in to continue" in body:
-                return True
+            body = ""
+            try:
+                body = (page.inner_text("body") or "").lower()
+            except Exception:
+                pass
+            login_phrases = [
+                "log in to continue",
+                "please log in",
+                "sign in to tiktok",
+            ]
+            for phrase in login_phrases:
+                if phrase in body:
+                    content_len = len(body)
+                    self.logger.debug(f"  Login page detected (body length: {content_len})")
+                    return True
             return False
         except Exception:
             return False
@@ -802,6 +1150,199 @@ class TikTokScraper:
             avg_per_post = total_engagement / video_stats_count
             account.engagement_rate = round((avg_per_post / account.followers) * 100, 4)
 
+    def _classify_account(self, videos: List[Video]) -> str:
+        captions = []
+        for v in videos:
+            if v.caption:
+                captions.append(v.caption.lower())
+        if not captions:
+            return "personal"
+
+        scores = {"travel": 0, "foodvloger": 0, "lifestyle": 0, "affiliate": 0}
+
+        for caption in captions:
+            for cls_name, keywords in CLASSIFICATION_KEYWORDS.items():
+                if not keywords:
+                    continue
+                words_lower = caption.lower()
+                for kw in keywords:
+                    if kw in words_lower:
+                        scores[cls_name] += 1
+
+        best = max(scores, key=scores.get)
+        if scores[best] == 0:
+            return "personal"
+        return best
+
+    def _scrape_follow_page(self, username: str, follow_type: str, max_users: int) -> List[str]:
+        usernames: Set[str] = set()
+        page = self.browser.new_page()
+
+        def on_response(response):
+            try:
+                if not response.ok:
+                    return
+                ctype = response.headers.get("content-type", "")
+                if "application/json" not in ctype:
+                    return
+                data = response.json()
+                if not isinstance(data, dict):
+                    return
+
+                for key in ("userList", "followers", "following"):
+                    ulist = data.get(key, [])
+                    if isinstance(ulist, list):
+                        for item in ulist:
+                            if not isinstance(item, dict):
+                                continue
+                            user = item.get("user", item)
+                            if isinstance(user, dict):
+                                uid = user.get("uniqueId")
+                                if uid and len(uid) > 1:
+                                    usernames.add(uid)
+
+                body = data.get("body")
+                if isinstance(body, dict):
+                    for key in ("userList", "followers", "following"):
+                        ulist = body.get(key, [])
+                        if isinstance(ulist, list):
+                            for item in ulist:
+                                if not isinstance(item, dict):
+                                    continue
+                                user = item.get("user", item)
+                                if isinstance(user, dict):
+                                    uid = user.get("uniqueId")
+                                    if uid and len(uid) > 1:
+                                        usernames.add(uid)
+            except Exception:
+                pass
+
+        page.on("response", on_response)
+
+        try:
+            url = f"{self.BASE_URL}/@{username}/{follow_type}"
+            self.logger.debug(f"  Navigasi {follow_type}: {url}")
+            page.goto(url, wait_until="domcontentloaded", timeout=self.settings.PAGE_LOAD_TIMEOUT)
+            self._handle_popups(page)
+            try:
+                page.wait_for_load_state("networkidle", timeout=10000)
+            except Exception:
+                pass
+            page.wait_for_timeout(3000)
+
+            if self._is_blocked_or_login(page):
+                self.logger.warning(f"  Login required for {follow_type} @{username}")
+                page.remove_listener("response", on_response)
+                page.close()
+                return []
+
+            scrolls_without_new = 0
+            prev_count = len(usernames)
+
+            for i in range(30):
+                try:
+                    page.evaluate("window.scrollBy(0, window.innerHeight * 2)")
+                except Exception:
+                    break
+                page.wait_for_timeout(2000)
+
+                current = len(usernames)
+                if current > prev_count:
+                    self.logger.debug(f"    Scroll {i+1}: +{current - prev_count} user (total: {current})")
+                    scrolls_without_new = 0
+                    prev_count = current
+                else:
+                    scrolls_without_new += 1
+                    self.logger.debug(f"    Scroll {i+1}: tidak ada user baru ({scrolls_without_new}/3)")
+
+                if scrolls_without_new >= 3:
+                    break
+                if current >= max_users:
+                    break
+
+        except Exception as e:
+            self.logger.error(f"  Error {follow_type} @{username}: {e}")
+        finally:
+            try:
+                page.remove_listener("response", on_response)
+                page.close()
+            except Exception:
+                pass
+
+        exclude = {"tiktok", "login", "signup", "explore", "messages",
+                    "settings", "feedback", "about", "trending",
+                    "shop", "live", "upload", "business", "creator"}
+        return [u for u in usernames if u.lower() not in exclude and u.lower() != username.lower()][:max_users]
+
+    def _scrape_followers(self, username: str) -> List[str]:
+        return self._scrape_follow_page(username, "followers", self.settings.MAX_FOLLOWERS_PER_ACCOUNT)
+
+    def _scrape_following(self, username: str) -> List[str]:
+        return self._scrape_follow_page(username, "following", self.settings.MAX_FOLLOWING_PER_ACCOUNT)
+
+    def _expand_network(self):
+        self.logger.info("=" * 60)
+        self.logger.info("NETWORK EXPANSION: BFS dari akun Banyumas")
+        self.logger.info("=" * 60)
+
+        seed_rows = self.db.conn.execute(
+            "SELECT username FROM accounts WHERE location_detected IS NOT NULL"
+        ).fetchall()
+
+        if not seed_rows:
+            self.logger.warning("Tidak ada akun Banyumas untuk di-expand")
+            return
+
+        queue = deque()
+        seen = set(self.scraped_accounts)
+
+        for (uname,) in seed_rows:
+            if uname not in seen:
+                queue.append((uname, 0))
+                seen.add(uname)
+
+        self.logger.info(f"Seed: {len(queue)} akun Banyumas untuk ekspansi (depth max: {self.settings.NETWORK_EXPANSION_DEPTH})")
+        new_total = 0
+
+        while queue and new_total < self.settings.MAX_NETWORK_ACCOUNTS:
+            current_uname, depth = queue.popleft()
+            self.logger.info(f"[Depth {depth+1}/{self.settings.NETWORK_EXPANSION_DEPTH}] @{current_uname}")
+
+            followers = self._scrape_followers(current_uname)
+            self.logger.info(f"  Followers: {len(followers)}")
+            self.browser.random_delay(self.settings.MIN_DELAY, self.settings.MAX_DELAY)
+
+            following = self._scrape_following(current_uname)
+            self.logger.info(f"  Following: {len(following)}")
+
+            for uid in set(followers + following):
+                if uid in seen:
+                    continue
+                seen.add(uid)
+
+                if self.db.account_exists(uid):
+                    continue
+
+                try:
+                    self._scrape_account(uid)
+                    self.scraped_accounts.add(uid)
+                    new_total += 1
+                    self.logger.info(f"  +1 akun baru ({new_total}/{self.settings.MAX_NETWORK_ACCOUNTS})")
+
+                    row = self.db.conn.execute(
+                        "SELECT location_detected FROM accounts WHERE username = ?", (uid,)
+                    ).fetchone()
+                    if row and row[0] and depth + 1 < self.settings.NETWORK_EXPANSION_DEPTH:
+                        queue.append((uid, depth + 1))
+
+                    self.browser.random_delay(self.settings.MIN_DELAY, self.settings.MAX_DELAY)
+                except Exception as e:
+                    self.logger.error(f"  Gagal scrape @{uid}: {e}")
+
+            self.browser.random_delay(self.settings.MIN_DELAY, self.settings.MAX_DELAY)
+
+        self.logger.info(f"Network expansion selesai. Total akun baru: {new_total}")
+
     @staticmethod
     def _extract_by_regex(html: str, patterns: List[str]) -> Optional[str]:
         for p in patterns:
@@ -857,3 +1398,14 @@ def _safe_int(value) -> Optional[int]:
         return int(value)
     except (ValueError, TypeError):
         return None
+
+
+def _debug_page(page, logger, label: str):
+    try:
+        logger.debug(f"  DEBUG [{label}]: URL={page.url}")
+        html = page.content()
+        logger.debug(f"  DEBUG [{label}]: HTML length={len(html)}")
+        body = page.inner_text("body")[:200]
+        logger.debug(f"  DEBUG [{label}]: body start={body[:100]}")
+    except Exception:
+        pass

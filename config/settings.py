@@ -191,16 +191,23 @@ class Settings:
     ])
 
     MAX_VIDEOS_PER_ACCOUNT: int = 99999
+    MAX_VIDEOS_TO_SCRAPE: int = 10
     HEADLESS: bool = False
     VIEWPORT_WIDTH: int = 1366
     VIEWPORT_HEIGHT: int = 768
-    PAGE_LOAD_TIMEOUT: int = 30000
-    ELEMENT_TIMEOUT: int = 10000
-    MIN_DELAY: float = 2.0
-    MAX_DELAY: float = 5.0
+    PAGE_LOAD_TIMEOUT: int = 45000
+    ELEMENT_TIMEOUT: int = 15000
+    MIN_DELAY: float = 3.0
+    MAX_DELAY: float = 7.0
     MAX_RETRIES: int = 3
     DATABASE_PATH: str = "output/tiktok_data.db"
     ACCOUNTS_CSV: str = "output/accounts.csv"
     VIDEOS_CSV: str = "output/videos.csv"
     LOG_FILE: str = "logs/scraping.log"
     LOG_LEVEL: str = "INFO"
+
+    ENABLE_NETWORK_EXPANSION: bool = True
+    NETWORK_EXPANSION_DEPTH: int = 2
+    MAX_FOLLOWERS_PER_ACCOUNT: int = 80
+    MAX_FOLLOWING_PER_ACCOUNT: int = 80
+    MAX_NETWORK_ACCOUNTS: int = 500
