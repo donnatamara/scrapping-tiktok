@@ -27,6 +27,12 @@ def parse_args():
         action="store_true",
         help="Mode debug (log lebih detail)",
     )
+    parser.add_argument(
+        "--connect",
+        type=str,
+        default="",
+        help="Connect ke remote Chrome via CDP (contoh: http://localhost:9222)",
+    )
     return parser.parse_args()
 
 
@@ -40,13 +46,17 @@ def main():
     elif args.visible:
         settings.HEADLESS = False
 
+    if args.connect:
+        settings.REMOTE_CDP = args.connect
+
     log_level = "DEBUG" if args.debug else "INFO"
 
     logger = setup_logger(settings.LOG_FILE, log_level)
     logger.info("=" * 60)
     logger.info("TIKTOK BANYUMAS SCRAPER v2.0")
     logger.info("=" * 60)
-    logger.info(f"Mode: {'HEADLESS' if settings.HEADLESS else 'VISIBLE'}")
+    mode = f"REMOTE CDP: {settings.REMOTE_CDP}" if settings.REMOTE_CDP else ("HEADLESS" if settings.HEADLESS else "VISIBLE")
+    logger.info(f"Mode: {mode}")
 
     db = Database(settings.DATABASE_PATH)
     db.connect()

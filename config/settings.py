@@ -190,6 +190,7 @@ class Settings:
         "pesan",
     ])
 
+    REMOTE_CDP: str = ""
     MAX_VIDEOS_PER_ACCOUNT: int = 99999
     MAX_VIDEOS_TO_SCRAPE: int = 10
     HEADLESS: bool = False
