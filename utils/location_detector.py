@@ -5,12 +5,13 @@ class LocationDetector:
     def __init__(self, subdistricts: List[str]):
         self.subdistricts_lower = {s.lower(): s for s in subdistricts}
         self.keywords = [
-            "banyumas",
+            "banyumas", "purwokerto",
         ]
 
     def detect(self, profile_location: Optional[str] = None,
                video_locations: Optional[List[str]] = None,
                bio: Optional[str] = None, nickname: Optional[str] = None,
+               username: Optional[str] = None,
                captions: Optional[List[str]] = None,
                hashtags: Optional[List[str]] = None) -> Tuple[Optional[str], Optional[str]]:
 
@@ -24,6 +25,11 @@ class LocationDetector:
                 loc = self._match_location(loc_text)
                 if loc:
                     return loc, "video_location"
+
+        if username:
+            loc = self._match_location(username)
+            if loc:
+                return loc, "username"
 
         if bio:
             loc = self._match_location(bio)

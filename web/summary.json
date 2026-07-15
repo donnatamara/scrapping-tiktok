@@ -1,43 +1,43 @@
 {
-  "total_accounts": 1079,
-  "total_raw_accounts": 1109,
-  "total_videos": 2804,
+  "total_accounts": 650,
+  "total_raw_accounts": 673,
+  "total_videos": 1747,
   "accounts_per_class": {
-    "personal": 876,
-    "foodvloger": 158,
-    "travel": 27,
-    "affiliate": 13,
-    "lifestyle": 5
+    "personal": 429,
+    "affiliate": 101,
+    "lifestyle": 14,
+    "foodvloger": 69,
+    "travel": 37
   },
-  "accounts_with_shop": 66,
-  "accounts_monetized": 40,
-  "with_location": 537,
+  "accounts_with_shop": 49,
+  "accounts_monetized": 19,
+  "with_location": 650,
   "classification_labels": [
     "personal",
-    "foodvloger",
-    "travel",
     "affiliate",
-    "lifestyle"
+    "lifestyle",
+    "foodvloger",
+    "travel"
   ],
   "classification_values": [
-    876,
-    158,
-    27,
-    13,
-    5
+    429,
+    101,
+    14,
+    69,
+    37
   ],
   "top_locations": [
     {
       "name": "Banyumas",
-      "count": 213
+      "count": 225
     },
     {
       "name": "Purwokerto",
-      "count": 76
+      "count": 155
     },
     {
       "name": "Wangon",
-      "count": 31
+      "count": 32
     },
     {
       "name": "Kalibagor",
@@ -45,11 +45,19 @@
     },
     {
       "name": "Patikraja",
-      "count": 20
+      "count": 21
     },
     {
       "name": "Kembaran",
-      "count": 18
+      "count": 20
+    },
+    {
+      "name": "Rawalo",
+      "count": 16
+    },
+    {
+      "name": "Ajibarang",
+      "count": 16
     },
     {
       "name": "Sumbang",
@@ -58,14 +66,6 @@
     {
       "name": "Kemranjen",
       "count": 16
-    },
-    {
-      "name": "Rawalo",
-      "count": 15
-    },
-    {
-      "name": "Ajibarang",
-      "count": 15
     },
     {
       "name": "Kebasen",
@@ -80,16 +80,20 @@
       "count": 14
     },
     {
+      "name": "Lumbir",
+      "count": 14
+    },
+    {
+      "name": "Pwt",
+      "count": 14
+    },
+    {
       "name": "Baturraden",
       "count": 13
     },
     {
-      "name": "Lumbir",
-      "count": 13
-    },
-    {
       "name": "Sokaraja",
-      "count": 11
+      "count": 12
     },
     {
       "name": "Purwokerto Utara",
@@ -102,95 +106,11 @@
     {
       "name": "Purwokerto Selatan",
       "count": 3
-    },
-    {
-      "name": "Purwokerto Timur",
-      "count": 2
     }
   ],
   "top_accounts": [
     {
       "rank": 1,
-      "username": "vilmeijuga",
-      "followers": 72600000,
-      "nickname": "VILMEI 🌟",
-      "classification": "personal",
-      "location": null,
-      "has_shop": false,
-      "monetization": false
-    },
-    {
-      "rank": 2,
-      "username": "haikalequinostd",
-      "followers": 9500000,
-      "nickname": "Haikalequino",
-      "classification": "foodvloger",
-      "location": null,
-      "has_shop": false,
-      "monetization": true
-    },
-    {
-      "rank": 3,
-      "username": "uncufadillah79_",
-      "followers": 6300000,
-      "nickname": "Uncu fadillah✨",
-      "classification": "personal",
-      "location": null,
-      "has_shop": false,
-      "monetization": false
-    },
-    {
-      "rank": 4,
-      "username": "tribunnews",
-      "followers": 5300000,
-      "nickname": "Tribunnews",
-      "classification": "personal",
-      "location": null,
-      "has_shop": false,
-      "monetization": false
-    },
-    {
-      "rank": 5,
-      "username": "farida.nurhan",
-      "followers": 5100000,
-      "nickname": "Farida Nurhan",
-      "classification": "personal",
-      "location": null,
-      "has_shop": false,
-      "monetization": false
-    },
-    {
-      "rank": 6,
-      "username": "eri_carl",
-      "followers": 5000000,
-      "nickname": "Erika Carlina",
-      "classification": "personal",
-      "location": null,
-      "has_shop": false,
-      "monetization": false
-    },
-    {
-      "rank": 7,
-      "username": "aniesbaswedan",
-      "followers": 3200000,
-      "nickname": "Anies Rasyid Baswedan",
-      "classification": "foodvloger",
-      "location": null,
-      "has_shop": false,
-      "monetization": false
-    },
-    {
-      "rank": 8,
-      "username": "rusdyramadhan_",
-      "followers": 3000000,
-      "nickname": "BANGKU KOSONG TV",
-      "classification": "travel",
-      "location": null,
-      "has_shop": false,
-      "monetization": false
-    },
-    {
-      "rank": 9,
       "username": "cahyaniryndua",
       "followers": 2300000,
       "nickname": "Kembaran cahya",
@@ -200,97 +120,27 @@
       "monetization": false
     },
     {
-      "rank": 10,
-      "username": "mayriow",
-      "followers": 2300000,
-      "nickname": "ioow",
-      "classification": "travel",
-      "location": null,
-      "has_shop": false,
-      "monetization": false
-    },
-    {
-      "rank": 11,
-      "username": "dmssnpt",
-      "followers": 1900000,
-      "nickname": "Dimas Senopati",
-      "classification": "personal",
-      "location": null,
-      "has_shop": false,
-      "monetization": false
-    },
-    {
-      "rank": 12,
-      "username": "beritasatuofficial",
-      "followers": 1500000,
-      "nickname": "beritasatu",
-      "classification": "personal",
-      "location": null,
-      "has_shop": false,
-      "monetization": false
-    },
-    {
-      "rank": 13,
-      "username": "bettyaugustina",
-      "followers": 1300000,
-      "nickname": "Betty Augustina",
-      "classification": "foodvloger",
-      "location": null,
-      "has_shop": false,
-      "monetization": false
-    },
-    {
-      "rank": 14,
-      "username": "daddykuliner",
-      "followers": 1300000,
-      "nickname": "Daddy Kuliner",
-      "classification": "personal",
-      "location": null,
-      "has_shop": false,
-      "monetization": true
-    },
-    {
-      "rank": 15,
+      "rank": 2,
       "username": "stevensuryadinata",
       "followers": 1100000,
       "nickname": "Eevee Boy",
-      "classification": "personal",
+      "classification": "affiliate",
       "location": "Kembaran",
       "has_shop": false,
       "monetization": false
     },
     {
-      "rank": 16,
-      "username": "kulinerbattle",
-      "followers": 1000000,
-      "nickname": "kuliner battle",
-      "classification": "personal",
-      "location": null,
-      "has_shop": false,
-      "monetization": false
-    },
-    {
-      "rank": 17,
-      "username": "maria.oldiest",
-      "followers": 866400,
-      "nickname": "Mariaabiring",
-      "classification": "personal",
-      "location": null,
-      "has_shop": false,
-      "monetization": false
-    },
-    {
-      "rank": 18,
+      "rank": 3,
       "username": "iniiyaaaw2",
       "followers": 722900,
       "nickname": "Kembaran iyaaaw",
-      "classification": "personal",
+      "classification": "lifestyle",
       "location": "Kembaran",
       "has_shop": false,
       "monetization": false
     },
     {
-      "rank": 19,
+      "rank": 4,
       "username": "syasyetwins",
       "followers": 672600,
       "nickname": "Sya &amp; Sye",
@@ -300,12 +150,162 @@
       "monetization": false
     },
     {
+      "rank": 5,
+      "username": "wong_.sepele26",
+      "followers": 395900,
+      "nickname": "Cah Banyumas🤸‍♀",
+      "classification": "personal",
+      "location": "Rawalo",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 6,
+      "username": "gunungslametstory",
+      "followers": 334400,
+      "nickname": "gunung slamet story",
+      "classification": "personal",
+      "location": "Banyumas",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 7,
+      "username": "banyumaspride_",
+      "followers": 317600,
+      "nickname": "rasido.tenar",
+      "classification": "personal",
+      "location": "Banyumas",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 8,
+      "username": "gerandong_tv",
+      "followers": 313800,
+      "nickname": "🟣GERANDONG TV🟣",
+      "classification": "personal",
+      "location": "Banyumas",
+      "has_shop": false,
+      "monetization": true
+    },
+    {
+      "rank": 9,
+      "username": "purwokerto.pstore",
+      "followers": 236600,
+      "nickname": "purwokerto.pstore",
+      "classification": "personal",
+      "location": "Kembaran",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 10,
+      "username": "bmstvofficial",
+      "followers": 227700,
+      "nickname": "Banyumas Televisi",
+      "classification": "personal",
+      "location": "Banyumas",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 11,
+      "username": "barkah_oktavian",
+      "followers": 210800,
+      "nickname": "Viann",
+      "classification": "personal",
+      "location": "Banyumas",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 12,
+      "username": "oong_hartono",
+      "followers": 171800,
+      "nickname": "OONG BANYUMAS SATRIA",
+      "classification": "personal",
+      "location": "Banyumas",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 13,
+      "username": "luddymisteri",
+      "followers": 145800,
+      "nickname": "ᴮᴹˢGHOST ˣᴾᴸᴼᴿᴱ",
+      "classification": "personal",
+      "location": "Banyumas",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 14,
+      "username": "queenfash88",
+      "followers": 142600,
+      "nickname": "QUEENFASHION88",
+      "classification": "personal",
+      "location": "Purwokerto",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 15,
+      "username": "purwokertoonline",
+      "followers": 140100,
+      "nickname": "Purwokerto Online",
+      "classification": "affiliate",
+      "location": "Banyumas",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 16,
+      "username": "ivokristi.m",
+      "followers": 131500,
+      "nickname": "ivokristimonitari",
+      "classification": "affiliate",
+      "location": "Banyumas",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 17,
+      "username": "kembaransiska",
+      "followers": 123900,
+      "nickname": "cis",
+      "classification": "personal",
+      "location": "Kembaran",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 18,
+      "username": "info_purwokerto",
+      "followers": 121900,
+      "nickname": "info_purwokerto",
+      "classification": "personal",
+      "location": "Purwokerto",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
+      "rank": 19,
+      "username": "rakhmiagustin",
+      "followers": 99500,
+      "nickname": "Rakhmi Agustin",
+      "classification": "lifestyle",
+      "location": "Purwokerto",
+      "has_shop": false,
+      "monetization": false
+    },
+    {
       "rank": 20,
-      "username": "bangdullofficiall",
-      "followers": 569800,
-      "nickname": "TRAVEL HORROR TV",
-      "classification": "travel",
-      "location": null,
+      "username": "taruna_widi",
+      "followers": 86500,
+      "nickname": "taruna widi",
+      "classification": "personal",
+      "location": "Purwokerto",
       "has_shop": false,
       "monetization": false
     }

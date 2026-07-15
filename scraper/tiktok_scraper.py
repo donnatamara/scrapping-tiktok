@@ -1048,6 +1048,7 @@ class TikTokScraper:
             profile_location=account.profile_location,
             video_locations=video_locations or None,
             bio=account.bio, nickname=account.nickname,
+            username=account.username,
             captions=captions or None, hashtags=all_hashtags or None,
         )
         account.location_detected = loc

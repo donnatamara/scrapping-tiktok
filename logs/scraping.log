@@ -7941,3 +7941,80 @@ Call log:
 2026-07-14 09:35:37 | WARNING  | Scraping dihentikan oleh user
 2026-07-14 09:35:38 | INFO     | Mengekspor ke CSV...
 >>>>>>> f96e8902d29152855f74524ad3374ce042a2631c
+2026-07-15 14:30:07 | INFO     | ============================================================
+2026-07-15 14:30:07 | INFO     | TIKTOK BANYUMAS SCRAPER v2.0
+2026-07-15 14:30:07 | INFO     | ============================================================
+2026-07-15 14:30:07 | INFO     | Mode: HEADLESS
+2026-07-15 14:30:07 | INFO     | Database: output/tiktok_data.db
+2026-07-15 14:30:07 | INFO     | ============================================================
+2026-07-15 14:30:07 | INFO     | MEMULAI SCRAPING TIKTOK BANYUMAS
+2026-07-15 14:30:07 | INFO     | ============================================================
+2026-07-15 14:30:15 | INFO     | Browser lokal berhasil dimulai
+2026-07-15 14:30:15 | INFO     | Warm-up: kunjungi TikTok homepage...
+2026-07-15 14:30:32 | INFO     | Warm-up selesai
+2026-07-15 14:30:32 | INFO     | Mencari akun untuk keyword: Banyumas
+2026-07-15 14:31:10 | INFO     |   Hashtag 'Banyumas': 0 akun
+2026-07-15 14:31:24 | INFO     | User search 'Banyumas': 17 akun (url=https://www.tiktok.com/search?q=Banyumas, blocked=False, verify=False)
+2026-07-15 14:31:40 | INFO     | Video search 'Banyumas': 15 akun (url=https://www.tiktok.com/search/video?q=Banyumas, blocked=False, verify=False)
+2026-07-15 14:31:40 | INFO     | Ditemukan 20 akun untuk keyword: Banyumas (0 dari hashtag, 17 user search, 15 video search)
+2026-07-15 14:31:40 | INFO     | Scrape akun: @ardhantto.wisata
+2026-07-15 14:31:50 | INFO     |   Scroll untuk load 10 video terbaru @ardhantto.wisata...
+2026-07-15 14:31:58 | INFO     |   Berhenti scroll: 3x berturut-turut tanpa video baru
+2026-07-15 14:31:58 | INFO     | Berhasil: @ardhantto.wisata | Followers: 998 | Video: 756 | Monetisasi: TIDAK | Shop: TIDAK | Kelas: personal
+2026-07-15 14:32:02 | INFO     | Scrape akun: @bang_giant
+2026-07-15 14:32:09 | WARNING  | Tidak bisa ambil data @bang_giant
+2026-07-15 14:32:15 | INFO     | Scrape akun: @cahyosangpencari2
+2026-07-15 14:32:24 | INFO     |   Scroll untuk load 10 video terbaru @cahyosangpencari2...
+2026-07-15 14:32:32 | INFO     |   Berhenti scroll: 3x berturut-turut tanpa video baru
+2026-07-15 14:32:32 | INFO     | Berhasil: @cahyosangpencari2 | Followers: 765 | Video: 206 | Monetisasi: TIDAK | Shop: TIDAK | Kelas: personal
+2026-07-15 14:32:38 | INFO     | Scrape akun: @filmtamumaghrib
+2026-07-15 14:32:49 | INFO     |   Scroll untuk load 10 video terbaru @filmtamumaghrib...
+2026-07-15 14:32:56 | INFO     |   Berhenti scroll: 3x berturut-turut tanpa video baru
+2026-07-15 14:32:56 | INFO     | Berhasil: @filmtamumaghrib | Followers: 11100 | Video: 14 | Monetisasi: TIDAK | Shop: TIDAK | Kelas: personal
+2026-07-15 14:33:01 | INFO     | Scrape akun: @mang_oot
+2026-07-15 14:33:12 | INFO     |   Scroll untuk load 10 video terbaru @mang_oot...
+2026-07-15 14:33:23 | INFO     | ============================================================
+2026-07-15 14:33:23 | INFO     | TIKTOK BANYUMAS SCRAPER v2.0
+2026-07-15 14:33:23 | INFO     | ============================================================
+2026-07-15 14:33:23 | INFO     | Mode: HEADLESS
+2026-07-15 14:33:23 | INFO     | Database: output/tiktok_data.db
+2026-07-15 14:33:23 | INFO     | ============================================================
+2026-07-15 14:33:23 | INFO     | MEMULAI SCRAPING TIKTOK BANYUMAS
+2026-07-15 14:33:23 | INFO     | ============================================================
+2026-07-15 14:33:23 | INFO     | Browser lokal berhasil dimulai
+2026-07-15 14:33:23 | INFO     | Warm-up: kunjungi TikTok homepage...
+2026-07-15 14:33:37 | INFO     | Warm-up selesai
+2026-07-15 14:33:37 | INFO     | Mencari akun untuk keyword: Banyumas
+2026-07-15 14:34:17 | INFO     |   Hashtag 'Banyumas': 0 akun
+2026-07-15 14:34:33 | INFO     | User search 'Banyumas': 31 akun (url=https://www.tiktok.com/@banyumas.underground/photo, blocked=False, verify=False)
+2026-07-15 14:34:50 | INFO     | Video search 'Banyumas': 15 akun (url=https://www.tiktok.com/search/video?q=Banyumas, blocked=False, verify=False)
+2026-07-15 14:34:50 | INFO     | Ditemukan 32 akun untuk keyword: Banyumas (0 dari hashtag, 31 user search, 15 video search)
+2026-07-15 14:34:50 | INFO     | Scrape akun: @bang_giant
+2026-07-15 14:34:59 | WARNING  | Tidak bisa ambil data @bang_giant
+2026-07-15 14:35:02 | INFO     | Scrape akun: @gobal
+2026-07-15 14:35:14 | INFO     |   Scroll untuk load 10 video terbaru @gobal...
+2026-07-15 14:35:22 | INFO     |   Berhenti scroll: 3x berturut-turut tanpa video baru
+2026-07-15 14:35:22 | INFO     | Berhasil: @gobal | Followers: 2931 | Video: 412 | Lokasi: Banyumas (bio) | Monetisasi: TIDAK | Shop: TIDAK | Kelas: personal
+2026-07-15 14:35:29 | INFO     | Scrape akun: @indiebanyumas.com
+2026-07-15 14:35:40 | WARNING  | Tidak bisa ambil data @indiebanyumas.com
+2026-07-15 14:35:45 | INFO     | Scrape akun: @indosiarid
+2026-07-15 14:36:01 | INFO     |   Scroll untuk load 10 video terbaru @indosiarid...
+2026-07-15 14:36:09 | INFO     |   Berhenti scroll: 3x berturut-turut tanpa video baru
+2026-07-15 14:36:09 | INFO     | Berhasil: @indosiarid | Followers: 20100000 | Video: 14000 | Monetisasi: TIDAK | Shop: TIDAK | Kelas: personal
+2026-07-15 14:36:14 | INFO     | Scrape akun: @kereta_hunter
+2026-07-15 14:36:25 | INFO     |   Scroll untuk load 10 video terbaru @kereta_hunter...
+2026-07-15 14:36:33 | INFO     |   Berhenti scroll: 3x berturut-turut tanpa video baru
+2026-07-15 14:36:33 | INFO     | Berhasil: @kereta_hunter | Followers: 11000 | Video: 341 | Monetisasi: TIDAK | Shop: TIDAK | ER: 0.03% | Kelas: personal
+2026-07-15 14:36:40 | INFO     | Scrape akun: @mang_oot
+2026-07-15 14:36:51 | INFO     |   Scroll untuk load 10 video terbaru @mang_oot...
+2026-07-15 14:37:00 | INFO     |   Berhenti scroll: 3x berturut-turut tanpa video baru
+2026-07-15 14:37:00 | INFO     | Berhasil: @mang_oot | Followers: 92500 | Video: 612 | Monetisasi: TIDAK | Shop: TIDAK | Kelas: personal
+2026-07-15 14:37:03 | INFO     | Scrape akun: @nave_456
+2026-07-15 14:37:14 | INFO     |   Scroll untuk load 10 video terbaru @nave_456...
+2026-07-15 14:37:23 | INFO     |   Berhenti scroll: 3x berturut-turut tanpa video baru
+2026-07-15 14:37:23 | INFO     | Berhasil: @nave_456 | Followers: 1168 | Video: 212 | Monetisasi: TIDAK | Shop: TIDAK | Kelas: personal
+2026-07-15 14:37:26 | INFO     | Scrape akun: @rho_official1
+2026-07-15 14:37:38 | INFO     |   Scroll untuk load 10 video terbaru @rho_official1...
+2026-07-15 14:37:46 | INFO     |   Berhenti scroll: 3x berturut-turut tanpa video baru
+2026-07-15 14:37:46 | INFO     | Berhasil: @rho_official1 | Followers: 156700 | Video: 166 | Monetisasi: TIDAK | Shop: TIDAK | Kelas: personal
+2026-07-15 14:37:51 | INFO     | Scrape akun: @riyan.creator.ebeg
